@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ērest grocery Calculator</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --container-bg: #1e1e1e;
+            --container-border: #2a2a2a;
+            --display-bg: #181818;
+            --display-border: #2c2c2c;
+            --main-text: #ffffff;
+            --sub-text: #888;
+            --btn-bg: #282828;
+            --btn-text: #ffffff;
+            --btn-hover: #383838;
+            --operator-bg: #33291e;
+            --operator-text: #ff9f0a;
+            --operator-hover: #4d3d2c;
+            --discount-bg: #004d40;
+            --discount-border: #00695c;
+            --discount-text: #ffffff;
+            --brand-color: #b30000;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f0f2f5;
+            --container-bg: #ffffff;
+            --container-border: #e0e0e0;
+            --display-bg: #f8f9fa;
+            --display-border: #dcdcdc;
+            --main-text: #1a1a1a;
+            --sub-text: #666;
+            --btn-bg: #f1f3f5;
+            --btn-text: #1a1a1a;
+            --btn-hover: #e2e6ea;
+            --operator-bg: #fff3e0;
+            --operator-text: #d97706;
+            --operator-hover: #ffe0b2;
+            --discount-bg: #e0f2f1;
+            --discount-border: #b2dfdb;
+            --discount-text: #004d40;
+            --brand-color: #b30000;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+            transition: background 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: var(--bg-color);
+            gap: 16px;
+        }
+
+        .header-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 380px;
+            padding: 0 5px;
+        }
+
+        .brand-title {
+            color: var(--brand-color);
+            font-size: 26px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 10px rgba(179, 0, 0, 0.2);
+        }
+
+        .theme-toggle {
+            background: var(--container-bg);
+            border: 1px solid var(--container-border);
+            color: var(--main-text);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.92);
+        }
+
+        .container {
+            position: relative;
+            background: var(--container-bg);
+            padding: 24px;
+            border-radius: 30px;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
+            width: 380px;
+            border: 1px solid var(--container-border);
+        }
+
+        .display {
+            width: 100%;
+            min-height: 100px;
+            background: var(--display-bg);
+            border-radius: 20px;
+            border: 1px solid var(--display-border);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-end;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+
+        #sub-display {
+            font-size: 11px; /* فۆنتێکی زۆر بچووک بۆ سەرەوە */
+            color: var(--sub-text);
+            margin-bottom: 4px;
+            min-height: 16px;
+            text-align: right;
+            width: 100%;
+        }
+
+        #main-display {
+            font-size: 32px;
+            color: var(--main-text);
+            font-weight: bold;
+            text-align: right;
+            width: 100%;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        button {
+            border: none;
+            outline: none;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--btn-bg);
+            font-size: 19px;
+            color: var(--btn-text);
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.1s, background 0.3s, color 0.3s;
+        }
+
+        button:active {
+            background: var(--btn-hover);
+            transform: scale(0.95);
+        }
+
+        .operator {
+            color: var(--operator-text);
+            font-weight: bold;
+            background: var(--operator-bg);
+            font-size: 15px;
+        }
+
+        .operator:active {
+            background: var(--operator-hover);
+        }
+
+        .logo-btn {
+            background: var(--operator-bg);
+            color: var(--brand-color);
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .logo-btn:active {
+            transform: scale(0.95);
+            background: var(--operator-hover);
+        }
+
+        .discount-btn {
+            color: var(--discount-text);
+            background: var(--discount-bg);
+            border: 1px solid var(--discount-border);
+            font-weight: bold;
+            font-size: 15px;
+            height: 50px;
+            border-radius: 16px !important;
+            width: 100% !important;
+        }
+
+        .discount-btn:active {
+            opacity: 0.85;
+        }
+
+        .equal {
+            background: #ff9f0a;
+            color: #121212;
+            font-weight: bold;
+            font-size: 22px;
+        }
+
+        .equal:active {
+            background: #ffb340;
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <div class="header-wrapper">
+        <div class="brand-title">Ērest grocery</div>
+        <button class="theme-toggle" id="themeToggleBtn" onclick="toggleTheme()">☀️</button>
+    </div>
+
+    <div class="container">
+        <div class="display">
+            <div id="sub-display"></div>
+            <div id="main-display">0</div>
+        </div>
+        <div class="buttons">
+            <!-- Row 0: Discount Buttons -->
+            <button class="discount-btn" onclick="applyDiscount(5)" style="grid-column: span 2; width: 100%;">  داشکانی   %5 </button>
+            <button class="discount-btn" onclick="applyDiscount(10)" style="grid-column: span 2; width: 100%;"> %10  داشکانی </button>
+
+            <!-- Row 1 -->
+            <button class="operator" data-action="clear" id="clear">AC</button>
+            <button class="operator" data-action="delete">⌫</button>
+            <button class="operator" data-action="percent">%</button>
+            <button class="logo-btn" id="logoBtn">ē</button>
+
+            <!-- Row 2 -->
+            <button class="num" data-num="7">7</button>
+            <button class="num" data-num="8">8</button>
+            <button class="num" data-num="9">9</button>
+            <button class="operator" data-action="divide">دابەش</button>
+
+            <!-- Row 3 -->
+            <button class="num" data-num="4">4</button>
+            <button class="num" data-num="5">5</button>
+            <button class="num" data-num="6">6</button>
+            <button class="operator" data-action="subtract">-</button>
+
+            <!-- Row 4 -->
+            <button class="num" data-num="1">1</button>
+            <button class="num" data-num="2">2</button>
+            <button class="num" data-num="3">3</button>
+            <button class="operator" data-action="add">+</button>
+
+            <!-- Row 5: Custom Zeros (00, 0) -->
+            <button class="num" data-num="00">00</button>
+            <button class="num" data-num="0">0</button>
+            <button class="num" data-num=".">.</button>
+            <button class="equal" data-action="calculate">=</button>
+        </div>
+    </div>
+
+    <script>
+        const mainDisplay = document.getElementById('main-display');
+        const subDisplay = document.getElementById('sub-display');
+        const buttons = document.querySelectorAll('button:not(.discount-btn):not(.logo-btn):not(.theme-toggle)');
+        const logoBtn = document.getElementById('logoBtn');
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const bodyElement = document.body;
+
+        let currentInput = '0';
+        let operator = null;
+        let previousInput = null;
+        let showingCredits = false;
+
+        function toggleTheme() {
+            if (bodyElement.getAttribute('data-theme') === 'dark') {
+                bodyElement.setAttribute('data-theme', 'light');
+                themeToggleBtn.innerText = '🌙';
+            } else {
+                bodyElement.setAttribute('data-theme', 'dark');
+                themeToggleBtn.innerText = '☀️';
+            }
+        }
+
+        function formatNumber(numStr) {
+            if (numStr === '' || numStr === 'هەوڵ بدەوە') return numStr;
+            const parts = numStr.split('.');
+            parts[0] = Number(parts[0]).toLocaleString('en');
+            return parts.join('.');
+        }
+
+        // نیشاندانی ناوەکان لەکاتی داگرتنی دوگمەی ē (ناوی سەرەوە زۆر بچووک دەبێت)
+        logoBtn.addEventListener('click', () => {
+            subDisplay.style.fontSize = '11px';
+            subDisplay.innerText = '    angilos by rover   ';
+            mainDisplay.innerText = '  ērest grocery';
+            mainDisplay.style.fontSize = '18px';
+            showingCredits = true;
+        });
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const num = button.getAttribute('data-num');
+                const action = button.getAttribute('data-action');
+
+                if (showingCredits) {
+                    subDisplay.innerText = '';
+                    mainDisplay.innerText = '0';
+                    mainDisplay.style.fontSize = '32px';
+                    currentInput = '0';
+                    previousInput = null;
+                    operator = null;
+                    showingCredits = false;
+                }
+
+                if (num !== null) {
+                    if (currentInput === '0' && num !== '.') {
+                        currentInput = num;
+                    } else {
+                        if (num === '.' && currentInput.includes('.')) return;
+                        currentInput += num;
+                    }
+                    mainDisplay.style.fontSize = '32px';
+                    mainDisplay.innerText = formatNumber(currentInput);
+                }
+
+                if (action === 'clear') {
+                    currentInput = '0';
+                    previousInput = null;
+                    operator = null;
+                    mainDisplay.style.fontSize = '32px';
+                    mainDisplay.innerText = currentInput;
+                    subDisplay.innerText = '';
+                }
+
+                if (action === 'delete') {
+                    if (currentInput.length > 1) {
+                        currentInput = currentInput.slice(0, -1);
+                    } else {
+                        currentInput = '0';
+                    }
+                    mainDisplay.style.fontSize = '32px';
+                    mainDisplay.innerText = formatNumber(currentInput);
+                }
+
+                if (['add', 'subtract', 'divide'].includes(action)) {
+                    const currentVal = parseFloat(currentInput.replace(/,/g, ''));
+                    
+                    if (previousInput !== null && operator !== null) {
+                        let prev = parseFloat(previousInput);
+                        let result = 0;
+                        switch (operator) {
+                            case 'add': result = prev + currentVal; break;
+                            case 'subtract': result = prev - currentVal; break;
+                            case 'divide': result = currentVal !== 0 ? prev / currentVal : 'هەوڵ بدەوە'; break;
+                        }
+                        currentInput = result.toString();
+                        mainDisplay.style.fontSize = '32px';
+                        mainDisplay.innerText = formatNumber(currentInput);
+                    }
+
+                    previousInput = currentInput.replace(/,/g, '');
+                    currentInput = '0';
+                    operator = action;
+                }
+
+                if (action === 'calculate') {
+                    if (previousInput === null || operator === null) return;
+                    
+                    let result = 0;
+                    const prev = parseFloat(previousInput);
+                    const curr = parseFloat(currentInput.replace(/,/g, ''));
+
+                    switch (operator) {
+                        case 'add': result = prev + curr; break;
+                        case 'subtract': result = prev - curr; break;
+                        case 'divide': result = curr !== 0 ? prev / curr : 'هەوڵ بدەوە'; break;
+                    }
+
+                    currentInput = result.toString();
+                    mainDisplay.style.fontSize = '32px';
+                    mainDisplay.innerText = formatNumber(currentInput);
+                    previousInput = null;
+                    operator = null;
+                    subDisplay.innerText = '';
+                }
+
+                if (action === 'percent') {
+                    currentInput = (parseFloat(currentInput.replace(/,/g, '')) / 100).toString();
+                    mainDisplay.style.fontSize = '32px';
+                    mainDisplay.innerText = formatNumber(currentInput);
+                }
+            });
+        });
+
+        function applyDiscount(percentage) {
+            if (showingCredits) {
+                subDisplay.innerText = '';
+                mainDisplay.innerText = '0';
+                mainDisplay.style.fontSize = '32px';
+                currentInput = '0';
+                showingCredits = false;
+            }
+
+            let amount = parseFloat(currentInput.replace(/,/g, ''));
+            if (isNaN(amount)) return;
+
+            let discountAmount = (amount * percentage) / 100;
+            let finalTotal = amount - discountAmount;
+
+            subDisplay.innerText = `داشکان (${percentage}%): ${discountAmount.toLocaleString('en')}`;
+            mainDisplay.style.fontSize = '32px';
+            mainDisplay.innerText = finalTotal.toLocaleString('en');
+            currentInput = finalTotal.toString();
+        }
+    </script>
+</body>
+</html>
